@@ -31,8 +31,7 @@
 		],
 		enabled: true,
 		stealthMode: false,
-		highlight: false,
-		websiteSpecificSettings: {}
+		highlight: false
 	}
     DeadnameRemover.start(settings);
 })();
