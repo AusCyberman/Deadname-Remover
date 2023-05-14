@@ -35,7 +35,8 @@ var DeadnameRemover = (() => {
     }],
     enabled: !0,
     stealthMode: !1,
-    highlight: !1
+    highlight: !1,
+    ignoreCase: !0
   };
 
   // src/inject/dom.ts
@@ -57,9 +58,9 @@ var DeadnameRemover = (() => {
   }
 
   // src/inject/inject.ts
-  var cachedWords = /* @__PURE__ */ new Map(), observer = null, aliveName = null, deadName = null, newWords = [], oldWords = [], revert = !1, highlight;
+  var cachedWords = /* @__PURE__ */ new Map(), observer = null, aliveName = null, deadName = null, newWords = [], oldWords = [], revert = !1, highlight, ignoreCase;
   function start(settings = DEFAULT_SETTINGS) {
-    cleanUp(), settings.enabled && (highlight = settings.highlight, aliveName = settings.name, deadName = settings.deadname, initalizeWords(), replaceDOMWithNewWords());
+    cleanUp(), settings.enabled && (highlight = settings.highlight, aliveName = settings.name, deadName = settings.deadname, ignoreCase = settings.ignoreCase, initalizeWords(), replaceDOMWithNewWords());
   }
   function cleanUp() {
     newWords.length === 0 || oldWords.length === 0 || (observer && observer.disconnect(), revert = !0, [newWords, oldWords] = [oldWords, newWords], replaceDOMWithNewWords(), [newWords, oldWords] = [oldWords, newWords], revert = !1, cachedWords.clear());
@@ -78,7 +79,7 @@ var DeadnameRemover = (() => {
   }
   var acceptableCharacters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_";
   function replaceText(text, isTitle) {
-    let currentIndex = 0, index, end, getIndex = (searchString, position) => index = text.toLowerCase().indexOf(searchString, position), getNextIndex = (position) => {
+    let currentIndex = 0, index, end, getIndex = (searchString, position) => index = (ignoreCase ? text.toLowerCase() : text).indexOf(searchString, position), getNextIndex = (position) => {
       for (index = getIndex(oldWords[currentIndex], position); index === -1; ) {
         if (currentIndex + 1 === oldWords.length)
           return !1;
@@ -86,7 +87,7 @@ var DeadnameRemover = (() => {
       }
       return !0;
     };
-    oldWords = oldWords.map((oldText) => oldText.toLowerCase()), highlight && !isTitle && (revert ? oldWords = oldWords.map((text2) => `<mark replaced="">${text2}</mark>`) : newWords = newWords.map((text2) => text2.includes("replaced") ? text2 : `<mark replaced="">${text2}</mark>`));
+    ignoreCase && (oldWords = oldWords.map((oldText) => oldText.toLowerCase())), highlight && !isTitle && (revert ? oldWords = oldWords.map((text2) => `<mark replaced="">${text2}</mark>`) : newWords = newWords.map((text2) => text2.includes("replaced") ? text2 : `<mark replaced="">${text2}</mark>`));
     let oldTextsLen = oldWords.map((word) => word.length);
     for (; getNextIndex(end); )
       end = index + oldTextsLen[currentIndex], acceptableCharacters.indexOf(text[end]) === -1 && acceptableCharacters.indexOf(text[index - 1]) === -1 && (text = text.substring(0, index) + newWords[currentIndex] + text.substring(end));

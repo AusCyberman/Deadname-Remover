@@ -9,6 +9,7 @@ let newWords: string[] = [];
 let oldWords: string[] = [];
 let revert = false;
 let highlight: boolean;
+let ignoreCase: boolean;
 
 export function start(settings: UserSettings = DEFAULT_SETTINGS) {
   cleanUp();
@@ -21,6 +22,7 @@ export function start(settings: UserSettings = DEFAULT_SETTINGS) {
   highlight = settings.highlight;
   aliveName = settings.name;
   deadName = settings.deadname;
+  ignoreCase = settings.ignoreCase;
   initalizeWords();
   replaceDOMWithNewWords();
 }
@@ -90,7 +92,7 @@ function replaceText(text: string, isTitle?: boolean) {
   let currentIndex = 0;
   let index: number; let
     end: number;
-  const getIndex = (searchString: string, position?: number) => index = text.toLowerCase().indexOf(searchString, position);
+  const getIndex = (searchString: string, position?: number) => index = (ignoreCase ? text.toLowerCase() : text).indexOf(searchString, position);
   const getNextIndex = (position: number) => {
     index = getIndex(oldWords[currentIndex], position);
     while (index === -1) {
@@ -102,7 +104,9 @@ function replaceText(text: string, isTitle?: boolean) {
     }
     return true;
   };
-  oldWords = oldWords.map((oldText) => oldText.toLowerCase());
+  if(ignoreCase) {
+    oldWords = oldWords.map((oldText) => oldText.toLowerCase());
+  }
   if (highlight && !isTitle) {
     if (revert) {
       oldWords = oldWords.map((text) => `<mark replaced="">${text}</mark>`);
