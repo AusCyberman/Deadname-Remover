@@ -13,8 +13,10 @@ let ignoreCase: boolean;
 
 export function start(settings: UserSettings = DEFAULT_SETTINGS) {
   cleanUp();
+  console.log(settings.websiteSpecificSettings)
   if(settings.websiteSpecificSettings && settings.websiteSpecificSettings[window.location.hostname]) {
-    settings = {...settings,...settings.websiteSpecificSettings[window.location.hostname]};
+    console.log("Using website specific settings for " + window.location.hostname );
+    settings = {...settings.websiteSpecificSettings[window.location.hostname],...settings};
   }
   if (!settings.enabled) {
     return;
