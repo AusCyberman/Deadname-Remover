@@ -32,7 +32,8 @@
 		enabled: true,
 		stealthMode: false,
 		highlight: false,
-		ignoreCase: true
+		ignoreCase: true,
+		websiteSpecificSettings: {}
 	}
     DeadnameRemover.start(settings);
 })();
