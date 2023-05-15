@@ -36,7 +36,8 @@ var DeadnameRemover = (() => {
     enabled: !0,
     stealthMode: !1,
     highlight: !1,
-    ignoreCase: !0
+    ignoreCase: !0,
+    websiteSpecificSettings: {}
   };
 
   // src/inject/dom.ts
@@ -60,7 +61,7 @@ var DeadnameRemover = (() => {
   // src/inject/inject.ts
   var cachedWords = /* @__PURE__ */ new Map(), observer = null, aliveName = null, deadName = null, newWords = [], oldWords = [], revert = !1, highlight, ignoreCase;
   function start(settings = DEFAULT_SETTINGS) {
-    cleanUp(), settings.enabled && (highlight = settings.highlight, aliveName = settings.name, deadName = settings.deadname, ignoreCase = settings.ignoreCase, initalizeWords(), replaceDOMWithNewWords());
+    cleanUp(), settings.websiteSpecificSettings && settings.websiteSpecificSettings[window.location.hostname] && (settings = { ...settings, ...settings.websiteSpecificSettings[window.location.hostname] }), settings.enabled && (highlight = settings.highlight, aliveName = settings.name, deadName = settings.deadname, ignoreCase = settings.ignoreCase, initalizeWords(), replaceDOMWithNewWords());
   }
   function cleanUp() {
     newWords.length === 0 || oldWords.length === 0 || (observer && observer.disconnect(), revert = !0, [newWords, oldWords] = [oldWords, newWords], replaceDOMWithNewWords(), [newWords, oldWords] = [oldWords, newWords], revert = !1, cachedWords.clear());
